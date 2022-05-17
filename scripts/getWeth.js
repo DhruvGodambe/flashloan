@@ -6,7 +6,7 @@ async function main() {
     const rinkebyWeth = "0xc778417E063141139Fce010982780140Aa0cD5Ab";
     const kovanWeth = "0xd0a1e359811322d97991e03f863a0c30c2cf029c";
     
-    const flashloanV3Address = "0xc5258F923DaBD87AC86cD82E379f1ffD02E43E22";
+    const flashloanV3Address = "0x9061E1aF32e7d345FfDbDabEBc2d915fAf667bfe";
 
     const WethAddress = kovanWeth;
     console.log("account address:", account.address)

@@ -2,22 +2,23 @@
 pragma solidity ^0.8.10;
 
 import "./aave/FlashLoanReceiverBase.sol";
-import "../../interfaces/v2/ILendingPoolAddressesProviderV2.sol";
-import "../../interfaces/v2/ILendingPoolV2.sol";
+import {IPoolAddressesProvider} from './aave/interfaces/IPoolAddressesProvider.sol';
 import "../WethInterface.sol";
 
-contract FlashloanV3 is FlashLoanReceiverBase, Withdrawable {
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract FlashloanV3 is FlashLoanReceiverBase {
     address weth;
 
     constructor(address _addressProvider, address _weth)
         public
-        FlashLoanReceiverBase(_addressProvider)
+        FlashLoanReceiverBase(IPoolAddressesProvider(_addressProvider))
     {
         weth = _weth;
     }
 
     /**
-     * @dev This function must be called only be the LENDING_POOL and takes care of repaying
+     * @dev This function must be called only be the POOL and takes care of repaying
      * active debt positions, migrating collateral and incurring new V2 debt token debt.
      *
      * @param assets The array of flash loaned assets used to repay debts.
@@ -45,8 +46,8 @@ contract FlashloanV3 is FlashLoanReceiverBase, Withdrawable {
 
         // Approve the LendingPool contract allowance to *pull* the owed amount
         for (uint256 i = 0; i < assets.length; i++) {
-            uint256 amountOwing = amounts[i].add(premiums[i]);
-            IERC20(assets[i]).approve(address(LENDING_POOL), amountOwing);
+            uint256 amountOwing = amounts[i] + premiums[i];
+            IERC20(assets[i]).approve(address(POOL), amountOwing);
         }
 
         return true;
@@ -72,7 +73,7 @@ contract FlashloanV3 is FlashLoanReceiverBase, Withdrawable {
             modes[i] = 0;
         }
 
-        LENDING_POOL.flashLoan(
+        POOL.flashLoan(
             receiverAddress,
             assets,
             amounts,

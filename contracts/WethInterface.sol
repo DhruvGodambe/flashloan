@@ -1,5 +1,5 @@
-
-pragma solidity ^0.6.6;
+// SPDX-License-Identifier: AGPL-3.0
+pragma solidity ^0.8.10;
 
 interface WethInterface {
   function allowance(address owner, address spender) external view returns (uint256 remaining);

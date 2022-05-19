@@ -2,7 +2,7 @@
 pragma solidity ^0.8.10;
 
 import "./aave/FlashLoanReceiverBase.sol";
-import {IPoolAddressesProvider} from './aave/interfaces/IPoolAddressesProvider.sol';
+import './aave/interfaces/IPoolAddressesProvider.sol';
 import "../WethInterface.sol";
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -11,11 +11,12 @@ contract FlashloanV3 is FlashLoanReceiverBase {
     address weth;
 
     constructor(address _addressProvider, address _weth)
-        public
         FlashLoanReceiverBase(IPoolAddressesProvider(_addressProvider))
     {
         weth = _weth;
     }
+
+    event PoolAddress(address pool);
 
     /**
      * @dev This function must be called only be the POOL and takes care of repaying
@@ -55,6 +56,11 @@ contract FlashloanV3 is FlashLoanReceiverBase {
 
     function transferWeth(address acc) public {
         WethInterface(weth).transfer(acc, WethInterface(weth).balanceOf(address(this)));
+    }
+
+    function getPoolAddress() public returns(address) {
+        emit PoolAddress(address(POOL));
+        return address(POOL);
     }
 
     function _flashloan(address[] memory assets, uint256[] memory amounts)
@@ -99,7 +105,7 @@ contract FlashloanV3 is FlashLoanReceiverBase {
      */
     function flashloan(address _asset) public {
         bytes memory data = "";
-        uint256 amount = 55000000000000000;
+        uint256 amount = 1000000000000000000;
 
         address[] memory assets = new address[](1);
         assets[0] = _asset;

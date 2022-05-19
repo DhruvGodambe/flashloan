@@ -4,6 +4,7 @@ async function main() {
     const [account] = await ethers.getSigners();
 
     const aavePoolAddressesProvider = "0x651b8A8cA545b251a8f49B57D5838Da0a8DFbEF9"
+    const aavePoolAddressesProviderRegistry = "0x3179C833fF0035D3BD42654f3aCAE4B0908af7A7"
     const kovanWeth = "0xd0a1e359811322d97991e03f863a0c30c2cf029c";
     
     const FlashloanV3 = await ethers.getContractFactory("FlashloanV3");

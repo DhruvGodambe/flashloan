@@ -28,6 +28,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
       url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API}`,
       accounts: [process.env.PRIVATE_KEY]
     },
+    rinkeby: {
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API}`,
+      accounts: [process.env.PRIVATE_KEY]
+    },
     mumbai: {
       url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API}`,
       accounts: [process.env.PRIVATE_KEY]

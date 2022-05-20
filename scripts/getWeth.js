@@ -6,9 +6,9 @@ async function main() {
     const rinkebyWeth = "0xc778417E063141139Fce010982780140Aa0cD5Ab";
     const kovanWeth = "0xd0a1e359811322d97991e03f863a0c30c2cf029c";
     
-    const flashloanV3Address = "0x9061E1aF32e7d345FfDbDabEBc2d915fAf667bfe";
+    const flashloanSimpleV3Address = "0x28AbC4c38D1Ddda364a33ea691fc079F5A8da0b9";
 
-    const WethAddress = kovanWeth;
+    const WethAddress = rinkebyWeth;
     console.log("account address:", account.address)
 
     const Weth = new ethers.Contract(WethAddress, WethInterface.abi, account);
@@ -19,7 +19,7 @@ async function main() {
     // console.log(tx);
 
     console.log("balance of", account.address, " : ", (await Weth.balanceOf(account.address)).toString())
-    console.log("balance of", flashloanV3Address, " : ", (await Weth.balanceOf(flashloanV3Address)).toString())
+    console.log("balance of", flashloanSimpleV3Address, " : ", (await Weth.balanceOf(flashloanSimpleV3Address)).toString())
 }
 
 main();

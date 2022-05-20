@@ -15,13 +15,11 @@ interface IFaucet {
 }
 
 contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
-    address weth;
     IFaucet public immutable FAUCET;
 
-    constructor(address _addressProvider, address _weth, address _faucet)
+    constructor(address _addressProvider, address _faucet)
         FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider))
     {
-        weth = _weth;
         FAUCET = IFaucet(_faucet);
     }
 
@@ -62,8 +60,8 @@ contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
         return true;
     }
 
-    function transferWeth(address acc) public {
-        WethInterface(weth).transfer(acc, WethInterface(weth).balanceOf(address(this)));
+    function transferWeth(address weth) public {
+        WethInterface(weth).transfer(msg.sender, WethInterface(weth).balanceOf(address(this)));
     }
 
     function getPoolAddress() public returns(address) {

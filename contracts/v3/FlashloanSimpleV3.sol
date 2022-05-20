@@ -15,12 +15,12 @@ interface IFaucet {
 }
 
 contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
-    IFaucet public immutable FAUCET;
+    // IFaucet public immutable FAUCET;
 
-    constructor(address _addressProvider, address _faucet)
+    constructor(address _addressProvider)
         FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider))
     {
-        FAUCET = IFaucet(_faucet);
+        // FAUCET = IFaucet(_faucet);
     }
 
     event PoolAddress(address pool);
@@ -52,7 +52,7 @@ contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
         // Therefore ensure your contract has enough to repay
         // these amounts.
         uint amountOwed = amount + premium;
-        FAUCET.mint(asset,premium);
+        // FAUCET.mint(asset,premium);
 
         // Approve the LendingPool contract allowance to *pull* the owed amount
         IERC20(asset).approve(address(POOL), amountOwed);

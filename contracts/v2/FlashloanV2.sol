@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: agpl-3.0
 pragma solidity ^0.6.6;
 
 import "./aave/FlashLoanReceiverBaseV2.sol";
@@ -5,15 +6,11 @@ import "../../interfaces/v2/ILendingPoolAddressesProviderV2.sol";
 import "../../interfaces/v2/ILendingPoolV2.sol";
 import "../WethInterface.sol";
 
-contract FlashloanV2 is FlashLoanReceiverBaseV2, Withdrawable {
-    address weth;
+contract FlashloanV2 is FlashLoanReceiverBaseV2 {
 
-    constructor(address _addressProvider, address _weth)
+    constructor(address _addressProvider)
         public
-        FlashLoanReceiverBaseV2(_addressProvider)
-    {
-        weth = _weth;
-    }
+        FlashLoanReceiverBaseV2(_addressProvider) {}
 
     /**
      * @dev This function must be called only be the LENDING_POOL and takes care of repaying
@@ -51,8 +48,8 @@ contract FlashloanV2 is FlashLoanReceiverBaseV2, Withdrawable {
         return true;
     }
 
-    function transferWeth(address acc) public {
-        WethInterface(weth).transfer(acc, WethInterface(weth).balanceOf(address(this)));
+    function transferWeth(address weth) public {
+        WethInterface(weth).transfer(msg.sender, WethInterface(weth).balanceOf(address(this)));
     }
 
     function _flashloan(address[] memory assets, uint256[] memory amounts)

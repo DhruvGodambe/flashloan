@@ -37,6 +37,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
       accounts: [process.env.PRIVATE_KEY]
     }
   },
-  solidity: "0.8.10",
+  solidity: "0.6.8",
 };
 

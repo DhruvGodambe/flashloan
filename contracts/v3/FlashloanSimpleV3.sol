@@ -4,8 +4,9 @@ pragma solidity ^0.8.10;
 import "./aave/FlashLoanSimpleReceiverBase.sol";
 import './aave/interfaces/IPoolAddressesProvider.sol';
 import "../WethInterface.sol";
+import "../Arbitrage.sol";
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IFaucet {
     function mint(
@@ -14,13 +15,15 @@ interface IFaucet {
     ) external;
 }
 
-contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
+contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase, Arbitrage {
     // IFaucet public immutable FAUCET;
+    address public immutable owner;
 
     constructor(address _addressProvider)
         FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider))
     {
         // FAUCET = IFaucet(_faucet);
+        owner = msg.sender;
     }
 
     event PoolAddress(address pool);
@@ -46,7 +49,7 @@ contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
         // This contract now has the funds requested.
         // Your logic goes here.
         //
-
+        ArbIt(amount, asset);
         // At the end of your logic above, this contract owes
         // the flashloaned amounts + premiums.
         // Therefore ensure your contract has enough to repay
@@ -60,8 +63,8 @@ contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
         return true;
     }
 
-    function transferWeth(address weth) public {
-        WethInterface(weth).transfer(msg.sender, WethInterface(weth).balanceOf(address(this)));
+    function transferERC20(address _asset) public {
+        IERC20(_asset).transfer(owner, IERC20(_asset).balanceOf(address(this)));
     }
 
     function getPoolAddress() public returns(address) {
@@ -109,8 +112,8 @@ contract FlashloanSimpleV3 is FlashLoanSimpleReceiverBase {
     /*
      *  Flash loan 100000000000000000 wei (0.1 ether) worth of `_asset`
      */
-    function flashloan(address _asset) public {
-        uint256 amount = 1000000000000000000;
+    function flashloan(address _asset, uint256 _amount) public {
+        uint256 amount = _amount;
 
         // _flashloan(assets, amounts);
         address receiverAddress = address(this);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
 interface ISwapRouterV03 {
     struct ExactInputSingleParams {
@@ -14,7 +14,7 @@ interface ISwapRouterV03 {
     }
 
     function exactInputSingle(
-        ExactInputSingleParams memory params
+        ExactInputSingleParams calldata params
     ) external returns (uint256 amountOut);
 }
 
@@ -39,8 +39,9 @@ interface IERC20 {
 }
 
 contract Arbitrage {
-    address DAI = 0xaD6D458402F60fD3Bd25163575031ACDce07538D;
-    address WETH = 0xc778417E063141139Fce010982780140Aa0cD5Ab;
+    address DAI = 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063;
+    address WETH = 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619;
+    address WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
 
     address uniswapV3SwapRouter = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
     address sushiswapV2SwapRouter = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506;
@@ -52,9 +53,10 @@ contract Arbitrage {
     IERC20 erc20Dai = IERC20(DAI);
     
     event UniswapTradeExecuted(uint256);
-    event SushiswapTradeExecuted(string);
+    event SushiswapTradeExecuted(uint[]);
 
     function executeUniswapTrade(uint amountIn, address token0, address token1) internal returns(uint256 amountOut){
+        IERC20(token0).approve(uniswapV3SwapRouter, amountIn);
         
         ISwapRouterV03.ExactInputSingleParams memory params =
             ISwapRouterV03.ExactInputSingleParams({
@@ -73,41 +75,36 @@ contract Arbitrage {
     }
 
     function executeSushiswapTrade(uint _amountIn, address token0, address token1) internal {
+        IERC20(token0).approve(sushiswapV2SwapRouter, _amountIn);
 
         address[] memory path;
         path = new address[](2); 
         path[0] = token0;
         path[1] = token1;
 
-        sushiswapRouter.swapExactTokensForTokens(_amountIn, 0, path, msg.sender, block.timestamp);
+        uint[] memory amounts = sushiswapRouter.swapExactTokensForTokens(_amountIn, 0, path, address(this), block.timestamp);
 
-        emit SushiswapTradeExecuted("HAHA");
+        emit SushiswapTradeExecuted(amounts);
     }
 
-    function ArbIt(uint amount_in, string memory currency) public {
-        address tokenIn;
-        address tokenOut;
+    function ArbIt(uint amount_in, address currency) public {
 
-        if(keccak256(abi.encodePacked(currency)) == keccak256(abi.encodePacked("WETH"))) {
-            erc20Weth.approve(uniswapV3SwapRouter, amount_in);
+        if(currency == WETH) {
             uint256 amountOut = executeUniswapTrade(amount_in, WETH, DAI);
             
-            erc20Dai.approve(sushiswapV2SwapRouter, amountOut);
-            executeSushiswapTrade(amountOut, tokenOut, tokenIn);
+            executeSushiswapTrade(amountOut, DAI, WETH);
 
-        } else if (keccak256(abi.encodePacked(currency)) == keccak256(abi.encodePacked("DAI"))) {
-            erc20Dai.approve(uniswapV3SwapRouter, amount_in);
+        } else if (currency == DAI) {
             uint256 amountOut = executeUniswapTrade(amount_in, DAI, WETH);
             
-            erc20Weth.approve(sushiswapV2SwapRouter, amountOut);
             executeSushiswapTrade(amountOut, WETH, DAI);
             
         }
 
     }
 
-    function transferWeth() public {
-        uint balance = erc20Weth.balanceOf(address(this));
-        erc20Weth.transfer(msg.sender, balance);
-    }
+    // function transferERC20(address asset) public {
+    //     uint balance = IERC20(asset).balanceOf(address(this));
+    //     IERC20(asset).transfer(owner, balance);
+    // }
 }

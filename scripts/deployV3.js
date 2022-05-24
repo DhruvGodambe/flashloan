@@ -9,9 +9,11 @@ async function main() {
     const kovanWeth = "0xd0a1e359811322d97991e03f863a0c30c2cf029c";
     const rinkebyWeth = "0xc778417E063141139Fce010982780140Aa0cD5Ab";
     const rinkebyFaucet = "0x88138CA1e9E485A1E688b030F85Bb79d63f156BA";
+
+    const aavePoolAddressesProviderPolygon = "0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb";
     
     const FlashloanSimpleV3 = await ethers.getContractFactory("FlashloanSimpleV3");
-    const flashloanSimpleV3 = await FlashloanSimpleV3.deploy(aavePoolAddressesProviderRinkeby);
+    const flashloanSimpleV3 = await FlashloanSimpleV3.deploy(aavePoolAddressesProviderPolygon);
     await flashloanSimpleV3.deployed();
 
     console.log("flashloanSimpleV3 contract deployed at: ", flashloanSimpleV3.address);

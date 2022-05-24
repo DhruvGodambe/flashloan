@@ -8,13 +8,10 @@ import "../WethInterface.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract FlashloanV3 is FlashLoanReceiverBase {
-    address weth;
 
-    constructor(address _addressProvider, address _weth)
+    constructor(address _addressProvider)
         FlashLoanReceiverBase(IPoolAddressesProvider(_addressProvider))
-    {
-        weth = _weth;
-    }
+    {}
 
     event PoolAddress(address pool);
 
@@ -54,8 +51,8 @@ contract FlashloanV3 is FlashLoanReceiverBase {
         return true;
     }
 
-    function transferWeth(address acc) public {
-        WethInterface(weth).transfer(acc, WethInterface(weth).balanceOf(address(this)));
+    function transferWeth(address weth) public {
+        WethInterface(weth).transfer(msg.sender, WethInterface(weth).balanceOf(address(this)));
     }
 
     function getPoolAddress() public returns(address) {

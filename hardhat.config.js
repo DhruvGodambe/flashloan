@@ -39,6 +39,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     kovan: {
       url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API}`,
       accounts: [process.env.PRIVATE_KEY]
+    },
+    polygon: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_2}`,
+      accounts: [process.env.PRIVATE_KEY_2]
     }
   },
   solidity: "0.8.10",
